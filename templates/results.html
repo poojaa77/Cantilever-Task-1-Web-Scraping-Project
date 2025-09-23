@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Results - Flipkart Scraper{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-database me-2"></i>Your Scraped Data Files</h3>
+        <p class="text-muted mb-0">All your Flipkart product data files</p>
+    </div>
+    
+    <div class="card-body">
+        {% if files %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>File Name</th>
+                        <th>Products</th>
+                        <th>Size</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for file in files %}
+                    <tr>
+                        <td>
+                            <code class="text-primary">{{ file.filename }}</code>
+                        </td>
+                        <td>
+                            <span class="badge bg-primary">{{ file.rows }} products</span>
+                        </td>
+                        <td>{{ "%.1f"|format(file.size/1024) }} KB</td>
+                        <td>{{ file.modified }}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{{ url_for('view_data', filename=file.filename.replace('.csv', '')) }}" 
+                                   class="btn btn-sm btn-primary" title="View and search data">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                                <a href="{{ url_for('download_file', filename=file.filename) }}" 
+                                   class="btn btn-sm btn-success" title="Download CSV file">
+                                    <i class="fas fa-download"></i> Download
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+            <h5>No data files found</h5>
+            <p class="text-muted">Your scraped CSV files will appear here</p>
+            <p class="text-info">
+                <i class="fas fa-lightbulb me-1"></i>
+                Run your scraper to create data files: <code>python scraper.py</code>
+            </p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

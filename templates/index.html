@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Flipkart Scraper{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header text-center py-4">
+                <h2><i class="fas fa-search me-3"></i>Flipkart Product Search</h2>
+                <p class="text-muted">Search through your scraped product data</p>
+            </div>
+            
+            <div class="card-body">
+                <!-- Quick Search Form -->
+                <form action="{{ url_for('search') }}" method="GET">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Search Products</label>
+                            <input type="text" name="q" class="form-control" placeholder="Enter product name..." required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold">Brand</label>
+                            <input type="text" name="brand" class="form-control" placeholder="e.g., Samsung">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold">Min Rating</label>
+                            <select name="min_rating" class="form-select">
+                                <option value="">Any</option>
+                                <option value="4">4+ Stars</option>
+                                <option value="3">3+ Stars</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold">Min Price (₹)</label>
+                            <input type="number" name="min_price" class="form-control" placeholder="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold">Max Price (₹)</label>
+                            <input type="number" name="max_price" class="form-control" placeholder="50000">
+                        </div>
+                        <div class="col-md-6 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                <i class="fas fa-search me-2"></i>Search Products
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <hr class="my-4">
+
+                <!-- Quick Actions -->
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <a href="{{ url_for('results') }}" class="btn btn-outline-primary w-100 mb-3">
+                            <i class="fas fa-database d-block mb-2 fa-2x"></i>
+                            View All Data Files
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{{ url_for('search') }}" class="btn btn-outline-info w-100 mb-3">
+                            <i class="fas fa-search d-block mb-2 fa-2x"></i>
+                            Advanced Search
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{{ url_for('stats') }}" class="btn btn-outline-success w-100 mb-3">
+                            <i class="fas fa-chart-pie d-block mb-2 fa-2x"></i>
+                            View Statistics
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Live Search Results -->
+        <div id="liveSearchResults" class="card" style="display: none;">
+            <div class="card-header">
+                <h5><i class="fas fa-bolt me-2"></i>Quick Results</h5>
+            </div>
+            <div class="card-body" id="liveResultsContent">
+                <!-- Live search results will appear here -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Live search functionality
+let searchTimeout;
+const searchInput = document.querySelector('input[name="q"]');
+const liveResults = document.getElementById('liveSearchResults');
+const resultsContent = document.getElementById('liveResultsContent');
+
+if (searchInput) {
+    searchInput.addEventListener('input', function() {
+        const query = this.value.trim();
+        
+        clearTimeout(searchTimeout);
+        
+        if (query.length < 2) {
+            liveResults.style.display = 'none';
+            return;
+        }
+        
+        searchTimeout = setTimeout(() => {
+            fetch(`/api/search?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.products && data.products.length > 0) {
+                        let html = '';
+                        data.products.forEach((product, index) => {
+                            html += `
+                                <div class="border-bottom py-2 ${index === data.products.length - 1 ? 'border-0' : ''}">
+                                    <div class="fw-bold">${product.title}</div>
+                                    <div class="text-muted small">
+                                        ${product.price} • ${product.rating} • ${product.source}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        
+                        if (data.total > data.products.length) {
+                            html += `<div class="text-center mt-2">
+                                <small class="text-muted">Showing ${data.products.length} of ${data.total} results</small>
+                            </div>`;
+                        }
+                        
+                        resultsContent.innerHTML = html;
+                        liveResults.style.display = 'block';
+                    } else {
+                        liveResults.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Search error:', error);
+                    liveResults.style.display = 'none';
+                });
+        }, 500);
+    });
+}
+</script>
+{% endblock %}

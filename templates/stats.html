@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Statistics - Flipkart Scraper{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-header">
+        <h3><i class="fas fa-chart-bar me-2"></i>Data Statistics</h3>
+    </div>
+</div>
+
+<!-- Summary Stats -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <div class="stats-number">{{ stats.total_products or 0 }}</div>
+                <div class="text-muted">Total Products</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <div class="stats-number">{{ stats.total_files or 0 }}</div>
+                <div class="text-muted">Data Files</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <div class="stats-number">₹{{ "{:.0f}".format(stats.avg_price or 0) }}</div>
+                <div class="text-muted">Average Price</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <div class="stats-number">{{ "{:.1f}".format(stats.avg_rating or 0) }}</div>
+                <div class="text-muted">Average Rating</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top Brands -->
+{% if stats.top_brands %}
+<div class="card">
+    <div class="card-header">
+        <h5><i class="fas fa-crown me-2"></i>Top Brands</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {% for brand, count in stats.top_brands.items() %}
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h6 class="card-title">{{ brand }}</h6>
+                        <div class="stats-number">{{ count }}</div>
+                        <small class="text-muted">products</small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body text-center">
+        <p class="text-muted">No brand data available</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

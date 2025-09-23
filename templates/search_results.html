@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results - Flipkart Scraper{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h4><i class="fas fa-search me-2"></i>Search Results</h4>
+                <p class="mb-0">Query: "<strong>{{ query }}</strong>" | Found {{ total }} products</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="{{ url_for('search') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-search me-1"></i>New Search
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if filters.brand or filters.min_price or filters.max_price or filters.min_rating %}
+<div class="card mb-4">
+    <div class="card-body">
+        <h6><i class="fas fa-filter me-2"></i>Applied Filters:</h6>
+        <div class="d-flex flex-wrap gap-2">
+            {% if filters.brand %}
+            <span class="badge bg-secondary">Brand: {{ filters.brand }}</span>
+            {% endif %}
+            {% if filters.min_price %}
+            <span class="badge bg-secondary">Min Price: ₹{{ filters.min_price }}</span>
+            {% endif %}
+            {% if filters.max_price %}
+            <span class="badge bg-secondary">Max Price: ₹{{ filters.max_price }}</span>
+            {% endif %}
+            {% if filters.min_rating %}
+            <span class="badge bg-secondary">Min Rating: {{ filters.min_rating }}+</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if products %}
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            {% for product in products %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h6 class="card-title">{{ product.title[:60] }}{% if product.title|length > 60 %}...{% endif %}</h6>
+                        <div class="mb-2">
+                            <span class="fw-bold text-success">{{ product.price }}</span>
+                            {% if product.numeric_rating > 0 %}
+                            <span class="badge bg-warning text-dark ms-2">
+                                <i class="fas fa-star"></i> {{ product.rating }}
+                            </span>
+                            {% endif %}
+                        </div>
+                        <small class="text-muted">
+                            <i class="fas fa-file me-1"></i>{{ product.source_file }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if total > 50 %}
+        <div class="text-center mt-4">
+            <p class="text-muted">Showing first 50 results of {{ total }} total matches</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body text-center py-5">
+        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+        <h5>No products found</h5>
+        <p class="text-muted">Try different search terms or adjust your filters</p>
+        <a href="{{ url_for('search') }}" class="btn btn-primary">
+            <i class="fas fa-search me-2"></i>Try Another Search
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

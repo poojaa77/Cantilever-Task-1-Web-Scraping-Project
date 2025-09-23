@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}View Data - {{ stats.filename }}{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h4><i class="fas fa-table me-2"></i>Product Data Viewer</h4>
+                <p class="mb-0">File: <code>{{ stats.filename }}</code> | Total: <span id="total-count">{{ stats.total_products }}</span> products</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="{{ url_for('download_file', filename=stats.filename) }}" class="btn btn-success">
+                    <i class="fas fa-download me-2"></i>Download CSV
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search and Filters -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5><i class="fas fa-filter me-2"></i>Search & Filter</h5>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Search Products</label>
+                <input type="text" id="searchInput" class="form-control" placeholder="Search by name...">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Brand</label>
+                <select id="brandFilter" class="form-select">
+                    <option value="">All</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Price Range</label>
+                <select id="priceFilter" class="form-select">
+                    <option value="">All</option>
+                    <option value="0-10000">Under ₹10k</option>
+                    <option value="10000-20000">₹10k-20k</option>
+                    <option value="20000-50000">₹20k-50k</option>
+                    <option value="50000-999999">Above ₹50k</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Rating</label>
+                <select id="ratingFilter" class="form-select">
+                    <option value="">All</option>
+                    <option value="4">4+ Stars</option>
+                    <option value="3">3+ Stars</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button id="clearFilters" class="btn btn-outline-secondary w-100">Clear</button>
+            </div>
+        </div>
+        
+        <div class="mt-3">
+            <span class="text-muted">Showing <span id="visible-count">{{ stats.total_products }}</span> products</span>
+        </div>
+    </div>
+</div>
+
+<!-- Results Table -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between">
+        <h5>Products</h5>
+        <div>
+            <button id="sortPrice" class="btn btn-outline-primary btn-sm me-2">Sort by Price</button>
+            <button id="sortRating" class="btn btn-outline-primary btn-sm">Sort by Rating</button>
+        </div>
+    </div>
+    <div class="card-body p-0">
