@@ -165,23 +165,6 @@ python data_processor.py
 
 This creates comprehensive charts and analysis reports saved in the `static/images/` directory.
 
-## 📊 Sample Data
-
-The scraper extracts the following information for each product:
-
-| Field | Description | Example |
-|-------|-------------|---------|
-| title | Complete product name | "Samsung Galaxy M34 5G (Midnight Blue, 128 GB)" |
-| price | Current selling price | "₹18,999" |
-| rating | Customer rating | "4.2" |
-| image_url | Product image link | "https://rukminim2.flixcart.com/..." |
-| scraped_at | Timestamp | "2024-01-20 14:30:22" |
-
-### Data Quality Metrics
-- **Success Rate**: 95%+ successful data extraction
-- **Data Completeness**: All required fields captured
-- **File Size**: ~50-100KB per 100 products
-- **Processing Speed**: ~24 products per page, 2-3 minutes per page
 
 ## 🔍 Web Interface Features
 
